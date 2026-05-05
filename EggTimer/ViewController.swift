@@ -1,10 +1,13 @@
 import UIKit
+import AVFoundation
 
 class ViewController: UIViewController {
     
     @IBOutlet weak var progressBar: UIProgressView!
     
     @IBOutlet weak var labelText: UILabel!
+    
+    var player: AVAudioPlayer?
     
     let eggTimes = ["Soft": 3, "Medium": 4, "Hard": 7]
     
@@ -36,6 +39,17 @@ class ViewController: UIViewController {
                                      repeats: true)
     }
     
+    func playSound() {
+        if let url = Bundle.main.url(forResource: "alarm_sound", withExtension: "mp3") {
+            do {
+                player = try AVAudioPlayer(contentsOf: url)
+                player?.play()
+            } catch {
+                print("Error playing sound")
+            }
+        }
+    }
+    
     @objc func updateCountdown() {
         
         if secondsRemaining > 0 {
@@ -48,12 +62,15 @@ class ViewController: UIViewController {
             
             print("\(secondsRemaining) seconds")
             
-        } else {
+        }
+        else {
             timer?.invalidate()
             timer = nil
-            progressBar.progress = 1.0  // ✅ full
+            progressBar.progress = 1.0
             
             labelText.text = "Done"
+            
+            playSound()   
             
             print("Done!")
         }
